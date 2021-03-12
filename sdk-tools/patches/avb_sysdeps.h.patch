@@ -1,0 +1,11 @@
+--- android-11/external/u-boot/lib/libavb/avb_sysdeps.h	2020-09-17 20:18:07.065840340 +0800
++++ patches/avb_sysdeps.h	2020-09-17 20:17:19.075835559 +0800
+@@ -19,7 +19,7 @@
+  * like uint8_t, uint64_t, and bool (with |false|, |true| keywords)
+  * must be present.
+  */
+-#include <common.h>
++//#include <common.h>
+ 
+ /* If you don't have gcc or clang, these attribute macros may need to
+  * be adjusted.

@@ -1,0 +1,11 @@
+--- android-11/system/core/fastboot/fastboot.cpp	2020-09-17 20:26:38.319224603 +0800
++++ patches/fastboot.cpp	2020-09-17 20:25:40.735885534 +0800
+@@ -62,7 +62,7 @@
+ #include <build/version.h>
+ #include <libavb/libavb.h>
+ #include <liblp/liblp.h>
+-#include <platform_tools_version.h>
++//#include <platform_tools_version.h>
+ #include <sparse/sparse.h>
+ #include <ziparchive/zip_archive.h>
+ 

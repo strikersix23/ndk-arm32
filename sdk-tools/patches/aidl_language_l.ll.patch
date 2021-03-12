@@ -1,0 +1,16 @@
+--- android-11/system/tools/aidl/aidl_language_l.ll	2020-09-17 15:59:36.912521876 +0800
++++ patches/aidl_language_l.ll	2020-09-18 15:58:27.002514912 +0800
+@@ -22,6 +22,13 @@
+ #include "parser.h"
+ #include "aidl_language_y-module.h"
+ 
++// After executing the bison command, please manually add the header file
++// aidl_language_l.cpp error: unknown type name 'YYSTYPE'
++// aidl_language_l.cpp error: unknown type name 'YYLTYPE'
++#include "aidl_language_y.h"
++#include "aidl_language_y.cpp"
++
++
+ #define YY_USER_ACTION yylloc->columns(yyleng);
+ %}
+ 

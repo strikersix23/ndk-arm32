@@ -1,0 +1,43 @@
+--- android-11/art/libartbase/arch/instruction_set.h	2020-09-16 14:56:08.461395523 +0800
++++ patches/instruction_set.h	2020-09-16 14:54:36.764719721 +0800
+@@ -23,6 +23,40 @@
+ #include "base/enums.h"
+ #include "base/macros.h"
+ 
++// from android-11/art/build/art.go
++// We need larger stack overflow guards for ASAN, as the compiled code will hav
++// larger frame sizes. For simplicity, just use global not-target-specific cflags.
++// Note: We increase this for both debug and non-debug, as the overflow gap will
++//       be compiled into managed code. We always preopt (and build core images) with
++//       the debug version. So make the gap consistent (and adjust for the worst).
++
++/*
++if len(ctx.Config().SanitizeDevice()) > 0 || len(ctx.Config().SanitizeHost()) > 0 {
++		cflags = append(cflags,
++			"-DART_STACK_OVERFLOW_GAP_arm=8192",
++			"-DART_STACK_OVERFLOW_GAP_arm64=16384",
++			"-DART_STACK_OVERFLOW_GAP_x86=16384",
++			"-DART_STACK_OVERFLOW_GAP_x86_64=20480")
++} else {
++		cflags = append(cflags,
++			"-DART_STACK_OVERFLOW_GAP_arm=8192",
++			"-DART_STACK_OVERFLOW_GAP_arm64=8192",
++			"-DART_STACK_OVERFLOW_GAP_x86=8192",
++			"-DART_STACK_OVERFLOW_GAP_x86_64=8192")
++}
++*/
++
++#define ART_STACK_OVERFLOW_GAP_arm 8192
++#define ART_STACK_OVERFLOW_GAP_arm64 16384
++#define ART_STACK_OVERFLOW_GAP_x86 16384
++#define ART_STACK_OVERFLOW_GAP_x86_64 20480
++
++// from android-11/art/build/art.go
++// default frame size limit: 1736
++// device limit: 7400
++// host limit: 6400
++#define ART_FRAME_SIZE_LIMIT 6400
++
+ namespace art {
+ 
+ enum class InstructionSet {

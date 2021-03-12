@@ -1,0 +1,15 @@
+--- android-11/system/core/libprocessgroup/cgrouprc/include/android/cgrouprc.h	2020-09-16 12:07:41.727246788 +0800
++++ patches/cgrouprc.h	2020-09-16 12:06:26.203905931 +0800
+@@ -28,6 +28,12 @@
+ struct ACgroupController;
+ typedef struct ACgroupController ACgroupController;
+ 
++// if android-ndk api >= 29 no need to redefined __ANDROID_API__
++#ifdef __ANDROID_API__
++#undef __ANDROID_API__
++#define __ANDROID_API__ 30
++#endif
++
+ #if __ANDROID_API__ >= __ANDROID_API_Q__
+ 
+ // ACgroupFile

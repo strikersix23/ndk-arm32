@@ -1,0 +1,61 @@
+--- openjdk-jdk11u-jdk-11.0.8-10_adopt/src/hotspot/os/linux/os_linux.cpp	2020-07-15 03:31:54.000000000 +0800
++++ /data/data/com.termux/files/home/jdk11/openjdk-11.0.8/src/hotspot/os/linux/os_linux.cpp	2020-12-25 15:39:38.783530989 +0800
+@@ -101,7 +101,6 @@
+ # include <string.h>
+ # include <syscall.h>
+ # include <sys/sysinfo.h>
+-# include <gnu/libc-version.h>
+ # include <sys/ipc.h>
+ # include <sys/shm.h>
+ # include <link.h>
+@@ -109,6 +108,10 @@
+ # include <inttypes.h>
+ # include <sys/ioctl.h>
+ 
++#ifndef __ANDROID__ 
++# include <gnu/libc-version.h>
++#endif
++
+ #ifndef _GNU_SOURCE
+   #define _GNU_SOURCE
+   #include <sched.h>
+@@ -117,6 +120,23 @@
+   #include <sched.h>
+ #endif
+ 
++#ifdef __ANDROID__
++// getpagesize defined in unistd.h
++#define SHMLBA (getpagesize())
++    
++// from https://android.googlesource.com/platform/bionic/+/refs/heads/master/libc/bionic/getloadavg.cpp
++int getloadavg(double averages[], int n) {
++  if (n < 0) return -1;
++  if (n > 3) n = 3;
++  struct sysinfo si;
++  if (sysinfo(&si) == -1) return -1;
++  for (int i = 0; i < n; ++i) {
++    averages[i] = static_cast<double>(si.loads[i]) / static_cast<double>(1 << SI_LOAD_SHIFT);
++  }
++  return n;
++}
++#endif // __ANDROID__
++
+ // if RUSAGE_THREAD for getrusage() has not been defined, do it here. The code calling
+ // getrusage() is prepared to handle the associated failure.
+ #ifndef RUSAGE_THREAD
+@@ -594,6 +614,7 @@
+ // detecting pthread library
+ 
+ void os::Linux::libpthread_init() {
++#ifndef __ANDROID__
+   // Save glibc and pthread version strings.
+ #if !defined(_CS_GNU_LIBC_VERSION) || \
+     !defined(_CS_GNU_LIBPTHREAD_VERSION)
+@@ -611,6 +632,7 @@
+   str = (char *)malloc(n, mtInternal);
+   confstr(_CS_GNU_LIBPTHREAD_VERSION, str, n);
+   os::Linux::set_libpthread_version(str);
++#endif // __ANDROID__
+ }
+ 
+ /////////////////////////////////////////////////////////////////////////////

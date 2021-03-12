@@ -1,0 +1,11 @@
+--- openjdk-jdk11u-jdk-11.0.8-10_adopt/src/java.desktop/unix/native/libawt_xawt/xawt/XToolkit.c	2020-07-15 03:31:54.000000000 +0800
++++ /data/data/com.termux/files/home/jdk11/openjdk-11.0.8/src/java.desktop/unix/native/libawt_xawt/xawt/XToolkit.c	2020-12-25 16:23:17.636903806 +0800
+@@ -27,7 +27,7 @@
+ #include <X11/Xutil.h>
+ #include <X11/Xos.h>
+ #include <X11/Xatom.h>
+-#ifdef __linux__
++#if defined(_linux__) && !defined(__ANDROID__)
+ #include <execinfo.h>
+ #endif
+ 

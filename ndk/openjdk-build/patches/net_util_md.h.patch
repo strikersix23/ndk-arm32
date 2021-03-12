@@ -1,0 +1,14 @@
+--- openjdk-jdk11u-jdk-11.0.8-10_adopt/src/java.base/unix/native/libnet/net_util_md.h	2020-07-15 03:31:54.000000000 +0800
++++ /data/data/com.termux/files/home/jdk11/openjdk-11.0.8/src/java.base/unix/native/libnet/net_util_md.h	2020-12-15 10:38:39.458612290 +0800
+@@ -30,6 +30,11 @@
+ #include <poll.h>
+ #include <sys/socket.h>
+ 
++#ifdef __ANDROID__
++#include <netinet/in.h>
++#include <netinet/ip.h> 
++#endif // __ANDROID__
++
+ /************************************************************************
+  * Macros and constants
+  */

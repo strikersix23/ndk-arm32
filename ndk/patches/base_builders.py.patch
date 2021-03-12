@@ -1,0 +1,29 @@
+--- llvm_android/base_builders.py	2021-02-03 08:26:06.355554934 +0800
++++ /sdcard/miui/llvm_android/base_builders.py	2021-02-03 08:11:33.022134600 +0800
+@@ -169,7 +169,8 @@
+         ldflags = []
+         # When cross compiling, toolchain libs won't work on target arch.
+         if not self._is_cross_compiling():
+-            ldflags.append(f'-L{self.toolchain.lib_dir}')
++            #ldflags.append(f'-L{self.toolchain.lib_dir}')
++            None
+         return ldflags
+ 
+     @property
+@@ -593,7 +594,15 @@
+ 
+         defines['LLVM_ENABLE_PROJECTS'] = ';'.join(sorted(self.llvm_projects))
+ 
+-        defines['LLVM_TARGETS_TO_BUILD'] = ';'.join(sorted(self.llvm_targets))
++        #defines['LLVM_TARGETS_TO_BUILD'] = ';'.join(sorted(self.llvm_targets))
++        defines['LLVM_TARGETS_TO_BUILD'] = 'all'
++        # building for target
++        defines['LLVM_TARGET_ARCH'] = 'AArch64'
++        # llvm triple
++        defines['LLVM_HOST_TRIPLE'] = 'aarch64-unknown-linux-android'
++        
++        defines['LLVM_ENABLE_PIC'] = 'ON'
++        
+         defines['LLVM_BUILD_LLVM_DYLIB'] = 'ON'
+ 
+         if self.build_tags:

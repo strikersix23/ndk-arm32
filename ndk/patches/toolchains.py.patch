@@ -1,0 +1,30 @@
+--- llvm_android/toolchains.py	2021-02-03 08:26:06.955554994 +0800
++++ /sdcard/miui/llvm_android/toolchains.py	2021-02-03 08:11:32.972134595 +0800
+@@ -35,13 +35,13 @@
+     @property
+     def cc(self) -> Path:  # pylint: disable=invalid-name
+         """Returns the path to c compiler."""
+-        return self.path / 'bin' / 'clang'
+-
++        return self.path / 'bin' / 'aarch64-linux-android30-clang'
++        
+     @property
+     def cxx(self) -> Path:
+         """Returns the path to c++ compiler."""
+-        return self.path / 'bin' / 'clang++'
+-
++        return self.path / 'bin' / 'aarch64-linux-android30-clang++'
++        
+     @property
+     def cl(self) -> Path:
+         """Returns the path to windows c++ compiler."""
+@@ -134,7 +134,8 @@
+ 
+     @property
+     def resource_dir(self) -> Path:
+-        return self.clang_lib_dir / 'lib' / 'linux'
++        #return self.clang_lib_dir / 'lib' / 'linux'
++        return self.clang_lib_dir / 'lib' / 'android'
+ 
+ 
+ def get_prebuilt_toolchain() -> Toolchain:

@@ -1,0 +1,47 @@
+--- llvm_android/do_build.py	2021-02-03 08:26:06.418888274 +0800
++++ /sdcard/miui/llvm_android/do_build.py	2021-02-03 08:45:37.085671560 +0800
+@@ -124,7 +124,7 @@
+     builders.CompilerRTBuilder().build()
+     # 32-bit host crts are not needed for Darwin
+     if hosts.build_host().is_linux:
+-        builders.CompilerRTHostI386Builder().build()
++        builders.CompilerRTHostARMBuilder().build()
+     builders.LibOMPBuilder().build()
+     if build_lldb_server:
+         builders.LldbServerBuilder().build()
+@@ -244,6 +244,7 @@
+         'clang',
+         'clang-tools-extra',
+         'lld',
++        'libunwind',
+     )
+ 
+     # Get generic MODULE_LICENSE_* files from our android subdirectory.
+@@ -655,6 +656,14 @@
+     stage1.build_android_targets = args.debug or instrumented
+     stage1.build()
+     set_default_toolchain(stage1.installed_toolchain)
++    
++    prebuilt_toolchain: toolchains.Toolchain = toolchains.get_prebuilt_toolchain()
++    
++    # copy aarch64-linux-android29-clang to stage1-install/bin
++    shutil.copy2(prebuilt_toolchain.cc, stage1.install_dir / 'bin')
++    # copy aarch64-linux-android29-clang++ to stage1-install/bin
++    shutil.copy2(prebuilt_toolchain.cxx, stage1.install_dir / 'bin')
++    
+ 
+     if build_lldb:
+         # Swig is needed for both host and windows lldb.
+@@ -713,6 +722,12 @@
+             set_default_toolchain(stage2.installed_toolchain)
+ 
+         Builder.output_toolchain = stage2.installed_toolchain
++        
++        # copy aarch64-linux-android30-clang to stage2-install/bin
++        shutil.copy2(prebuilt_toolchain.cc, stage2.install_dir / 'bin')
++        # copy aarch64-linux-android30-clang++ to stage2-install/bin
++        shutil.copy2(prebuilt_toolchain.cxx, stage2.install_dir / 'bin')
++        
+         if hosts.build_host().is_linux and do_runtimes:
+             build_runtimes(build_lldb_server=build_lldb)
+ 

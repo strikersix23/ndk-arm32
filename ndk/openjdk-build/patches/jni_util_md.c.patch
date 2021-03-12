@@ -1,0 +1,11 @@
+--- openjdk-jdk11u-jdk-11.0.8-10_adopt/src/java.base/unix/native/libjava/jni_util_md.c	2020-07-15 03:31:54.000000000 +0800
++++ /data/data/com.termux/files/home/jdk11/openjdk-11.0.8/src/java.base/unix/native/libjava/jni_util_md.c	2020-12-19 09:36:48.176396863 +0800
+@@ -30,7 +30,7 @@
+ #include "jni_util.h"
+ #include "dlfcn.h"
+ 
+-#if defined(LINUX) && (defined(_GNU_SOURCE) || \
++#if defined(LINUX) && !defined(__ANDROID__) && (defined(_GNU_SOURCE) || \
+          (defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE < 200112L \
+              && defined(_XOPEN_SOURCE) && _XOPEN_SOURCE < 600))
+ extern int __xpg_strerror_r(int, char *, size_t);

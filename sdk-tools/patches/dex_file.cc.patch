@@ -1,0 +1,14 @@
+--- android-11/art/libdexfile/dex/dex_file.cc	2020-09-16 22:43:47.357873323 +0800
++++ patches/dex_file.cc	2020-09-16 22:42:26.351198586 +0800
+@@ -605,6 +605,12 @@
+   }
+ }
+ 
++// this function is no implements
++std::ostream& operator<<(std::ostream& os, EncodedArrayValueIterator::ValueType code){
++    return os << code;
++}
++
+ void EncodedArrayValueIterator::Next() {
+   pos_++;
+   if (pos_ >= array_size_) {

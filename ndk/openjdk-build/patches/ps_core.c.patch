@@ -1,0 +1,42 @@
+--- openjdk-jdk11u-jdk-11.0.8-10_adopt/src/jdk.hotspot.agent/linux/native/libsaproc/ps_core.c	2020-07-15 03:31:54.000000000 +0800
++++ /data/data/com.termux/files/home/jdk11/openjdk-11.0.8/src/jdk.hotspot.agent/linux/native/libsaproc/ps_core.c	2020-12-25 16:19:46.663549456 +0800
+@@ -34,6 +34,39 @@
+ #include "salibelf.h"
+ #include "cds.h"
+ 
++#ifdef __ANDROID__
++#include <sys/types.h>
++#include <time.h>
++/*
++struct elf_siginfo {
++  int si_signo;
++  int si_code;
++  int si_errno;
++};
++*/
++typedef unsigned long elf_greg_t;
++typedef elf_greg_t elf_gregset_t[NGREG];
++
++struct elf_prstatus {
++  struct elf_siginfo pr_info;
++  short pr_cursig;
++  unsigned long pr_sigpend;
++  unsigned long pr_sighold;
++  pid_t pr_pid;
++  pid_t pr_ppid;
++  pid_t pr_pgrp;
++  pid_t pr_sid;
++  struct timeval pr_utime;
++  struct timeval pr_stime;
++  struct timeval pr_cutime;
++  struct timeval pr_cstime;
++  elf_gregset_t pr_reg;
++  int pr_fpvalid;
++};
++
++typedef struct elf_prstatus prstatus_t;
++#endif // __ANDROID__
++
+ // This file has the libproc implementation to read core files.
+ // For live processes, refer to ps_proc.c. Portions of this is adapted
+ // /modelled after Solaris libproc.so (in particular Pcore.c)

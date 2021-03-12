@@ -1,0 +1,166 @@
+cmake_minimum_required(VERSION 3.14.2)
+
+project(compiler-rt)
+
+set(COMPILER-RT ${AOSP}/external/compiler-rt)
+
+set(COMPILER-RT_SRC_FILES 
+    ${COMPILER-RT}/lib/builtins/enable_execute_stack.c
+    ${COMPILER-RT}/lib/builtins/absvdi2.c
+    ${COMPILER-RT}/lib/builtins/absvsi2.c
+    ${COMPILER-RT}/lib/builtins/absvti2.c
+    ${COMPILER-RT}/lib/builtins/adddf3.c
+    ${COMPILER-RT}/lib/builtins/addsf3.c
+    ${COMPILER-RT}/lib/builtins/addtf3.c
+    ${COMPILER-RT}/lib/builtins/addvdi3.c
+    ${COMPILER-RT}/lib/builtins/addvsi3.c
+    ${COMPILER-RT}/lib/builtins/addvti3.c
+    ${COMPILER-RT}/lib/builtins/ashldi3.c
+    ${COMPILER-RT}/lib/builtins/ashlti3.c
+    ${COMPILER-RT}/lib/builtins/ashrdi3.c
+    ${COMPILER-RT}/lib/builtins/ashrti3.c
+    ${COMPILER-RT}/lib/builtins/clear_cache.c
+    ${COMPILER-RT}/lib/builtins/clzdi2.c
+    ${COMPILER-RT}/lib/builtins/clzsi2.c
+    ${COMPILER-RT}/lib/builtins/clzti2.c
+    ${COMPILER-RT}/lib/builtins/cmpdi2.c
+    ${COMPILER-RT}/lib/builtins/cmpti2.c
+    ${COMPILER-RT}/lib/builtins/comparedf2.c
+    ${COMPILER-RT}/lib/builtins/comparesf2.c
+    ${COMPILER-RT}/lib/builtins/comparetf2.c
+    ${COMPILER-RT}/lib/builtins/ctzdi2.c
+    ${COMPILER-RT}/lib/builtins/ctzsi2.c
+    ${COMPILER-RT}/lib/builtins/ctzti2.c
+    ${COMPILER-RT}/lib/builtins/divdc3.c
+    ${COMPILER-RT}/lib/builtins/divdf3.c
+    ${COMPILER-RT}/lib/builtins/divdi3.c
+    ${COMPILER-RT}/lib/builtins/divmoddi4.c
+    ${COMPILER-RT}/lib/builtins/divmodsi4.c
+    ${COMPILER-RT}/lib/builtins/divsc3.c
+    ${COMPILER-RT}/lib/builtins/divsf3.c
+    ${COMPILER-RT}/lib/builtins/divsi3.c
+    ${COMPILER-RT}/lib/builtins/divtf3.c
+    ${COMPILER-RT}/lib/builtins/divti3.c
+    ${COMPILER-RT}/lib/builtins/divxc3.c
+    ${COMPILER-RT}/lib/builtins/eprintf.c
+    ${COMPILER-RT}/lib/builtins/extenddftf2.c
+    ${COMPILER-RT}/lib/builtins/extendhfsf2.c
+    ${COMPILER-RT}/lib/builtins/extendsfdf2.c
+    ${COMPILER-RT}/lib/builtins/extendsftf2.c
+    ${COMPILER-RT}/lib/builtins/ffsdi2.c
+    ${COMPILER-RT}/lib/builtins/ffsti2.c
+    ${COMPILER-RT}/lib/builtins/fixdfdi.c
+    ${COMPILER-RT}/lib/builtins/fixdfsi.c
+    ${COMPILER-RT}/lib/builtins/fixdfti.c
+    ${COMPILER-RT}/lib/builtins/fixsfdi.c
+    ${COMPILER-RT}/lib/builtins/fixsfsi.c
+    ${COMPILER-RT}/lib/builtins/fixsfti.c
+    ${COMPILER-RT}/lib/builtins/fixtfdi.c
+    ${COMPILER-RT}/lib/builtins/fixtfsi.c
+    ${COMPILER-RT}/lib/builtins/fixtfti.c
+    ${COMPILER-RT}/lib/builtins/fixunsdfdi.c
+    ${COMPILER-RT}/lib/builtins/fixunsdfsi.c
+    ${COMPILER-RT}/lib/builtins/fixunsdfti.c
+    ${COMPILER-RT}/lib/builtins/fixunssfdi.c
+    ${COMPILER-RT}/lib/builtins/fixunssfsi.c
+    ${COMPILER-RT}/lib/builtins/fixunssfti.c
+    ${COMPILER-RT}/lib/builtins/fixunstfdi.c
+    ${COMPILER-RT}/lib/builtins/fixunstfsi.c
+    ${COMPILER-RT}/lib/builtins/fixunstfti.c
+    ${COMPILER-RT}/lib/builtins/fixunsxfdi.c
+    ${COMPILER-RT}/lib/builtins/fixunsxfsi.c
+    ${COMPILER-RT}/lib/builtins/fixunsxfti.c
+    ${COMPILER-RT}/lib/builtins/fixxfdi.c
+    ${COMPILER-RT}/lib/builtins/fixxfti.c
+    ${COMPILER-RT}/lib/builtins/floatdidf.c
+    ${COMPILER-RT}/lib/builtins/floatdisf.c
+    ${COMPILER-RT}/lib/builtins/floatdixf.c
+    ${COMPILER-RT}/lib/builtins/floatsidf.c
+    ${COMPILER-RT}/lib/builtins/floatsisf.c
+    ${COMPILER-RT}/lib/builtins/floatsitf.c
+    ${COMPILER-RT}/lib/builtins/floattidf.c
+    ${COMPILER-RT}/lib/builtins/floattisf.c
+    ${COMPILER-RT}/lib/builtins/floattixf.c
+    ${COMPILER-RT}/lib/builtins/floatundidf.c
+    ${COMPILER-RT}/lib/builtins/floatundisf.c
+    ${COMPILER-RT}/lib/builtins/floatundixf.c
+    ${COMPILER-RT}/lib/builtins/floatunsidf.c
+    ${COMPILER-RT}/lib/builtins/floatunsisf.c
+    ${COMPILER-RT}/lib/builtins/floatunsitf.c
+    ${COMPILER-RT}/lib/builtins/floatuntidf.c
+    ${COMPILER-RT}/lib/builtins/floatuntisf.c
+    ${COMPILER-RT}/lib/builtins/floatuntixf.c
+    ${COMPILER-RT}/lib/builtins/gcc_personality_v0.c
+    ${COMPILER-RT}/lib/builtins/int_util.c
+    ${COMPILER-RT}/lib/builtins/lshrdi3.c
+    ${COMPILER-RT}/lib/builtins/lshrti3.c
+    ${COMPILER-RT}/lib/builtins/moddi3.c
+    ${COMPILER-RT}/lib/builtins/modsi3.c
+    ${COMPILER-RT}/lib/builtins/modti3.c
+    ${COMPILER-RT}/lib/builtins/muldc3.c
+    ${COMPILER-RT}/lib/builtins/muldf3.c
+    ${COMPILER-RT}/lib/builtins/muldi3.c
+    ${COMPILER-RT}/lib/builtins/mulodi4.c
+    ${COMPILER-RT}/lib/builtins/mulosi4.c
+    ${COMPILER-RT}/lib/builtins/muloti4.c
+    ${COMPILER-RT}/lib/builtins/mulsc3.c
+    ${COMPILER-RT}/lib/builtins/mulsf3.c
+    ${COMPILER-RT}/lib/builtins/multf3.c
+    ${COMPILER-RT}/lib/builtins/multi3.c
+    ${COMPILER-RT}/lib/builtins/mulvdi3.c
+    ${COMPILER-RT}/lib/builtins/mulvsi3.c
+    ${COMPILER-RT}/lib/builtins/mulvti3.c
+    ${COMPILER-RT}/lib/builtins/mulxc3.c
+    ${COMPILER-RT}/lib/builtins/negdf2.c
+    ${COMPILER-RT}/lib/builtins/negdi2.c
+    ${COMPILER-RT}/lib/builtins/negsf2.c
+    ${COMPILER-RT}/lib/builtins/negti2.c
+    ${COMPILER-RT}/lib/builtins/negvdi2.c
+    ${COMPILER-RT}/lib/builtins/negvsi2.c
+    ${COMPILER-RT}/lib/builtins/negvti2.c
+    ${COMPILER-RT}/lib/builtins/paritydi2.c
+    ${COMPILER-RT}/lib/builtins/paritysi2.c
+    ${COMPILER-RT}/lib/builtins/parityti2.c
+    ${COMPILER-RT}/lib/builtins/popcountdi2.c
+    ${COMPILER-RT}/lib/builtins/popcountsi2.c
+    ${COMPILER-RT}/lib/builtins/popcountti2.c
+    ${COMPILER-RT}/lib/builtins/powidf2.c
+    ${COMPILER-RT}/lib/builtins/powisf2.c
+    ${COMPILER-RT}/lib/builtins/powitf2.c
+    ${COMPILER-RT}/lib/builtins/powixf2.c
+    ${COMPILER-RT}/lib/builtins/subdf3.c
+    ${COMPILER-RT}/lib/builtins/subsf3.c
+    ${COMPILER-RT}/lib/builtins/subtf3.c
+    ${COMPILER-RT}/lib/builtins/subvdi3.c
+    ${COMPILER-RT}/lib/builtins/subvsi3.c
+    ${COMPILER-RT}/lib/builtins/subvti3.c
+    ${COMPILER-RT}/lib/builtins/trampoline_setup.c
+    ${COMPILER-RT}/lib/builtins/truncdfhf2.c
+    ${COMPILER-RT}/lib/builtins/truncdfsf2.c
+    ${COMPILER-RT}/lib/builtins/truncsfhf2.c
+    ${COMPILER-RT}/lib/builtins/trunctfdf2.c
+    ${COMPILER-RT}/lib/builtins/trunctfsf2.c
+    ${COMPILER-RT}/lib/builtins/ucmpdi2.c
+    ${COMPILER-RT}/lib/builtins/ucmpti2.c
+    ${COMPILER-RT}/lib/builtins/udivdi3.c
+    ${COMPILER-RT}/lib/builtins/udivmoddi4.c
+    ${COMPILER-RT}/lib/builtins/udivmodsi4.c
+    ${COMPILER-RT}/lib/builtins/udivmodti4.c
+    ${COMPILER-RT}/lib/builtins/udivsi3.c
+    ${COMPILER-RT}/lib/builtins/udivti3.c
+    ${COMPILER-RT}/lib/builtins/umoddi3.c
+    ${COMPILER-RT}/lib/builtins/umodsi3.c
+    ${COMPILER-RT}/lib/builtins/umodti3.c
+    )
+
+
+include_directories(${compiler-rt_headers})
+
+set(CMAKE_C_FLAGS "-Wno-unused-parameter -Wno-visibility -Wno-incompatible-pointer-types")
+
+add_library(compiler_rt STATIC ${COMPILER-RT_SRC_FILES})
+target_link_libraries(compiler_rt)
+
+
+
+

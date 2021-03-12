@@ -1,0 +1,15 @@
+--- android-11/system/core/adb/pairing_connection/include/adb/pairing/pairing_connection.h	2020-09-17 23:29:41.290709288 +0800
++++ patches/pairing_connection.h	2020-09-17 23:28:41.730703354 +0800
+@@ -37,6 +37,12 @@
+ // (see #PeerInfo).
+ __BEGIN_DECLS
+ 
++// if android-ndk api >= 30 no need to redefine __ANDROID_API__
++#ifdef __ANDROID_API__
++#undef __ANDROID_API__
++#define __ANDROID_API__ 30
++#endif
++
+ #if !defined(__ANDROID__) || __ANDROID_API__ >= 30
+ const uint32_t kMaxPeerInfoSize = 8192;
+ struct PeerInfo {

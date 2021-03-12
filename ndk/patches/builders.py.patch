@@ -1,0 +1,114 @@
+--- llvm_android/builders.py	2021-02-03 08:26:06.372221602 +0800
++++ /sdcard/miui/llvm_android/builders.py	2021-02-03 08:11:33.022134600 +0800
+@@ -87,7 +87,7 @@
+         # avoids specifying self.toolchain.lib_dir in rpath to find libc++ at
+         # runtime.
+         # [1] libc++ in our case, despite the flag saying -static-libstdc++.
+-        ldflags.append('-static-libstdc++')
++        ldflags.append('-static-libstdc++ -ldl -lc++')
+         return ldflags
+ 
+     @property
+@@ -136,7 +136,7 @@
+     @property
+     def llvm_projects(self) -> Set[str]:
+         proj = {'clang', 'lld', 'libcxxabi', 'libcxx', 'compiler-rt',
+-                'clang-tools-extra', 'openmp', 'polly'}
++                'clang-tools-extra', 'openmp', 'polly', 'libunwind'}
+         if self.build_lldb:
+             proj.add('lldb')
+         return proj
+@@ -154,13 +154,14 @@
+     @property
+     def ldflags(self) -> List[str]:
+         ldflags = super().ldflags
++        ldflags.append('-ldl')
+         if self.build_instrumented:
+             # Building libcxx, libcxxabi with instrumentation causes linker errors
+             # because these are built with -nodefaultlibs and prevent libc symbols
+             # needed by libclang_rt.profile from being resolved.  Manually adding
+             # the libclang_rt.profile to linker flags fixes the issue.
+             resource_dir = self.toolchain.resource_dir
+-            ldflags.append(str(resource_dir / 'libclang_rt.profile-x86_64.a'))
++            ldflags.append(str(resource_dir / 'libclang_rt.profile-aarch64.a'))
+         return ldflags
+ 
+     @property
+@@ -366,7 +367,8 @@
+         sarch = 'i686' if arch == hosts.Arch.I386 else arch.value
+         static_lib_filename = 'libclang_rt.fuzzer-' + sarch + '-android.a'
+ 
+-        lib_dir = self.install_dir / 'lib' / 'linux'
++        #lib_dir = self.install_dir / 'lib' / 'linux'
++        lib_dir = self.install_dir / 'lib' / 'android'
+         arch_dir = lib_dir / arch.value
+         arch_dir.mkdir(parents=True, exist_ok=True)
+         shutil.copy2(lib_dir / static_lib_filename, arch_dir / 'libFuzzer.a')
+@@ -433,6 +435,51 @@
+         super()._build_config()
+ 
+ 
++class CompilerRTHostARMBuilder(base_builders.LLVMRuntimeBuilder):
++    name: str = 'compiler-rt-arm-host'
++    src_dir: Path = paths.LLVM_PATH / 'compiler-rt'
++    config_list: List[configs.Config] = [configs.LinuxConfig(is_32_bit=True)]
++
++    @property
++    def install_dir(self) -> Path:
++        return self.output_toolchain.clang_lib_dir
++
++    @property
++    def cmake_defines(self) -> Dict[str, str]:
++        defines = super().cmake_defines
++        # Due to CMake and Clang oddities, we need to explicitly set
++        # CMAKE_C_COMPILER_TARGET and use march=armv8a in cflags below instead of
++        # relying on auto-detection from the Compiler-rt CMake files.
++        defines['CMAKE_C_COMPILER_TARGET'] = 'armv7a-linux-androideabi30'
++        defines['COMPILER_RT_INCLUDE_TESTS'] = 'ON'
++        defines['COMPILER_RT_ENABLE_WERROR'] = 'ON'
++        defines['SANITIZER_CXX_ABI'] = 'libstdc++'
++        return defines
++
++    @property
++    def cflags(self) -> List[str]:
++        cflags = super().cflags
++        # compiler-rt/lib/gwp_asan uses PRIu64 and similar format-specifier macros.
++        # Add __STDC_FORMAT_MACROS so their definition gets included from
++        # inttypes.h.  This explicit flag is only needed here.  64-bit host runtimes
++        # are built in stage1/stage2 and get it from the LLVM CMake configuration.
++        # These are defined unconditionaly in bionic and newer glibc
++        # (https://sourceware.org/git/gitweb.cgi?p=glibc.git;h=1ef74943ce2f114c78b215af57c2ccc72ccdb0b7)
++        cflags.append('-D__STDC_FORMAT_MACROS')
++        cflags.append('--target=armv7a-linux-androideabi30')
++        cflags.append('-march=armv7-a')
++        return cflags
++
++    def _build_config(self) -> None:
++        # Also remove the "stamps" created for the libcxx included in libfuzzer so
++        # CMake runs the configure again (after the cmake caches are deleted).
++        stamp_path = self.output_dir / 'lib' / 'fuzzer' / 'libcxx_fuzzer_arm-stamps'
++        if stamp_path.exists():
++            shutil.rmtree(stamp_path)
++        super()._build_config()
++
++
++
+ class LibUnwindBuilder(base_builders.LLVMRuntimeBuilder):
+     name: str = 'libunwind'
+     src_dir: Path = paths.LLVM_PATH / 'libunwind'
+@@ -541,6 +588,7 @@
+         # to be ON by default.
+         defines['CMAKE_POLICY_DEFAULT_CMP0056'] = 'NEW'
+         return defines
++    
+ 
+     def install_config(self) -> None:
+         # We need to install libomp manually.
+@@ -937,7 +985,6 @@
+     def cmake_defines(self) -> Dict[str, str]:
+         defines: Dict[str, str] = super().cmake_defines
+         defines['LIBCXX_ENABLE_STATIC_ABI_LIBRARY'] = 'ON'
+-        defines['LIBCXX_ENABLE_NEW_DELETE_DEFINITIONS'] = 'ON'
+         defines['LIBCXX_CXX_ABI'] = 'libcxxabi'
+         defines['LIBCXX_HAS_WIN32_THREAD_API'] = 'ON'
+ 

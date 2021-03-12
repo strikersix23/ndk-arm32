@@ -1,0 +1,25 @@
+--- /sdcard/miui/build-binary.mk	2021-02-08 10:36:09.314050060 +0800
++++ build/core/build-binary.mk	2021-02-08 10:42:12.294086219 +0800
+@@ -495,7 +495,7 @@
+ # Handle the static and shared libraries this module depends on
+ #
+ 
+-linker_ldflags := 
++linker_ldflags := -fuse-ld=lld
+ ifeq ($(APP_LD),deprecated)
+     ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
+         linker_ldflags := -fuse-ld=bfd
+@@ -508,10 +508,10 @@
+     $(linker_ldflags) $(TARGET_LDFLAGS) $(NDK_APP_LDFLAGS) $(LOCAL_LDFLAGS)
+ ndk_fuse_ld_flags := $(filter -fuse-ld=%,$(combined_ldflags))
+ ndk_used_linker := $(lastword $(ndk_fuse_ld_flags))
+-ifneq ($(filter -fuse-ld=bfd -fuse-ld=gold,$(ndk_used_linker)),)
+-    using_lld := false
+-else
++ifneq ($(filter -fuse-ld=lld ,$(ndk_used_linker)),)
+     using_lld := true
++else
++    using_lld := false
+ endif
+ 
+ # https://github.com/android/ndk/issues/885

@@ -1,0 +1,14 @@
+--- android-11/external/icu/icu4c/source/common/unicode/utypes.h	2020-09-18 15:41:03.554095497 +0800
++++ patches/utypes.h	2020-09-18 15:40:13.187423813 +0800
+@@ -40,6 +40,11 @@
+ #include "unicode/uconfig.h"
+ #include <float.h>
+ 
++// undef some macro
++#undef U_HIDE_INTERNAL_API
++#undef U_HIDE_DEPRECATED_API
++#undef U_HIDE_DRAFT_API
++
+ #if !U_NO_DEFAULT_INCLUDE_UTF_HEADERS
+ #   include "unicode/utf.h"
+ #endif

@@ -1,0 +1,14 @@
+--- openjdk-jdk11u-jdk-11.0.8-10_adopt/src/hotspot/share/utilities/elfFile.hpp	2020-07-15 03:31:54.000000000 +0800
++++ /data/data/com.termux/files/home/jdk11/openjdk-11.0.8/src/hotspot/share/utilities/elfFile.hpp	2020-12-25 11:17:42.541242310 +0800
+@@ -47,8 +47,10 @@
+ typedef Elf64_Sym       Elf_Sym;
+ 
+ #if !defined(_ALLBSD_SOURCE) || defined(__APPLE__)
++#ifndef ELF_ST_TYPE
+ #define ELF_ST_TYPE ELF64_ST_TYPE
+-#endif
++#endif // ELF_ST_TYPE
++#endif 
+ 
+ #else
+ 
